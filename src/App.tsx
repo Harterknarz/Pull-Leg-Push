@@ -4,11 +4,12 @@ import type { Day } from './types';
 import { DayPanel } from './components/DayPanel';
 import { BodyweightTab } from './components/BodyweightTab';
 import { PartnerView } from './components/PartnerView';
+import { HistoryTab } from './components/HistoryTab';
 import { AuthProvider, useAuth } from './lib/auth';
 import { Login } from './components/Login';
 import { supabase } from './lib/supabase';
 
-type Tab = Day | 'body' | 'partner';
+type Tab = Day | 'body' | 'history' | 'partner';
 
 function TrainingApp() {
   const { session, loading } = useAuth();
@@ -56,6 +57,9 @@ function TrainingApp() {
         <button className={`tab day-body ${tab === 'body' ? 'active' : ''}`} onClick={() => setTab('body')}>
           <span className="day">&nbsp;</span>Body
         </button>
+        <button className={`tab day-partner ${tab === 'history' ? 'active' : ''}`} onClick={() => setTab('history')}>
+          <span className="day">&nbsp;</span>Verlauf
+        </button>
         <button className={`tab day-partner ${tab === 'partner' ? 'active' : ''}`} onClick={() => setTab('partner')}>
           <span className="day">&nbsp;</span>Partner
         </button>
@@ -63,6 +67,7 @@ function TrainingApp() {
 
       {tab === 'mon' || tab === 'wed' || tab === 'fri' ? <DayPanel day={tab} key={tab} /> : null}
       {tab === 'body' && <BodyweightTab />}
+      {tab === 'history' && <HistoryTab />}
       {tab === 'partner' && <PartnerView />}
     </div>
   );
