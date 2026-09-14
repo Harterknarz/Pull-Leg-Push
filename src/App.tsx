@@ -2,18 +2,42 @@ import { useState } from 'react';
 import { DAY_LABEL } from './data/plan';
 import type { Day } from './types';
 import { DayPanel } from './components/DayPanel';
+import { AuthProvider, useAuth } from './lib/auth';
+import { Login } from './components/Login';
+import { supabase } from './lib/supabase';
 
 type Tab = Day | 'body' | 'partner';
 
-function App() {
+function TrainingApp() {
+  const { session, loading } = useAuth();
   const [tab, setTab] = useState<Tab>('mon');
+
+  if (loading) {
+    return <div className="wrap"><p className="sub">Lädt…</p></div>;
+  }
+
+  if (!session) {
+    return <Login />;
+  }
 
   return (
     <div className="wrap">
       <header>
         <div className="eyebrow">Ganzkörper Split · 3 Tage</div>
         <h1>Pull / Leg / Push</h1>
-        <p className="sub">Montag Pull · Mittwoch Leg · Freitag Push</p>
+        <div className="sub" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>Eingeloggt als {session.user.email}</span>
+          <button
+            onClick={() => supabase.auth.signOut()}
+            style={{
+              background: 'transparent', border: '1px solid var(--line)', color: 'var(--text-dim)',
+              borderRadius: 6, padding: '5px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
+              cursor: 'pointer', textTransform: 'uppercase',
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </header>
 
       <nav className="tabs">
@@ -41,9 +65,17 @@ function App() {
 
       <p className="note">
         Prototyp wird schrittweise auf Supabase migriert — Übungen, Sätze, RPE, Notizen &amp; Verlauf werden geteilt
-        gespeichert, sobald Auth + Logging angebunden sind.
+        gespeichert.
       </p>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <TrainingApp />
+    </AuthProvider>
   );
 }
 
