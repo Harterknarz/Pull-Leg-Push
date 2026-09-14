@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { DAY_LABEL } from './data/plan';
 import type { Day } from './types';
 import { DayPanel } from './components/DayPanel';
+import { BodyweightTab } from './components/BodyweightTab';
+import { PartnerView } from './components/PartnerView';
 import { AuthProvider, useAuth } from './lib/auth';
 import { Login } from './components/Login';
 import { supabase } from './lib/supabase';
@@ -59,14 +61,9 @@ function TrainingApp() {
         </button>
       </nav>
 
-      {tab === 'mon' || tab === 'wed' || tab === 'fri' ? <DayPanel day={tab} /> : null}
-      {tab === 'body' && <div className="card">Körpergewicht-Tracking folgt.</div>}
-      {tab === 'partner' && <div className="card">Partner-Ansicht (nur lesend) folgt.</div>}
-
-      <p className="note">
-        Prototyp wird schrittweise auf Supabase migriert — Übungen, Sätze, RPE, Notizen &amp; Verlauf werden geteilt
-        gespeichert.
-      </p>
+      {tab === 'mon' || tab === 'wed' || tab === 'fri' ? <DayPanel day={tab} key={tab} /> : null}
+      {tab === 'body' && <BodyweightTab />}
+      {tab === 'partner' && <PartnerView />}
     </div>
   );
 }
