@@ -22,11 +22,13 @@ interface SessionRow {
 interface Props {
   userId: string;
   limit?: number;
+  allowDelete?: boolean;
 }
 
-export function SessionList({ userId, limit = 8 }: Props) {
+export function SessionList({ userId, limit = 8, allowDelete = false }: Props) {
   const [sessions, setSessions] = useState<SessionRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -42,6 +44,16 @@ export function SessionList({ userId, limit = 8 }: Props) {
     })();
   }, [userId, limit]);
 
+  async function handleDelete(sessionId: string) {
+    if (!window.confirm('Diese Einheit wirklich löschen? Das kann nicht rückgängig gemacht werden.')) return;
+    setDeletingId(sessionId);
+    const { error } = await supabase.rpc('delete_workout_session', { p_session_id: sessionId });
+    if (!error) {
+      setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+    }
+    setDeletingId(null);
+  }
+
   if (loading) return <div className="card">Lädt…</div>;
   if (sessions.length === 0) return <div className="card">Noch keine Einheiten geloggt.</div>;
 
@@ -56,9 +68,25 @@ export function SessionList({ userId, limit = 8 }: Props) {
         }
         return (
           <div className="card" key={s.id}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <strong>{DAY_LABEL[s.day].name}</strong>
-              <span style={{ color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>{s.session_date}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>{s.session_date}</span>
+                {allowDelete && (
+                  <button
+                    onClick={() => handleDelete(s.id)}
+                    disabled={deletingId === s.id}
+                    title="Einheit löschen"
+                    style={{
+                      background: 'transparent', border: '1px solid var(--line)', color: 'var(--text-dim)',
+                      borderRadius: 6, padding: '3px 8px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {deletingId === s.id ? '…' : '🗑'}
+                  </button>
+                )}
+              </div>
             </div>
             {[...byExercise.entries()].map(([name, sets]) => (
               <div key={name} style={{ fontSize: 13, marginBottom: 4 }}>

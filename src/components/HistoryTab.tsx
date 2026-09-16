@@ -63,7 +63,7 @@ export function HistoryTab() {
       )}
 
       <div className="section-label">Meine letzten Einheiten</div>
-      <SessionList userId={userId} limit={10} />
+      <SessionList userId={userId} limit={10} allowDelete />
     </section>
   );
 }

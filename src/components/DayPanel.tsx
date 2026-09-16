@@ -247,6 +247,6 @@ const btnStyle: React.CSSProperties = {
   background: 'var(--panel)', color: 'var(--text-dim)', cursor: 'pointer',
 };
 function primaryBtnStyle(day: Day): React.CSSProperties {
-  const bg = day === 'mon' ? 'var(--pull)' : day === 'wed' ? 'var(--leg)' : 'var(--push)';
+  const bg = day === 'mon' ? 'var(--push)' : day === 'wed' ? 'var(--leg)' : 'var(--pull)';
   return { background: bg, color: '#0e0d10', fontWeight: 700, border: 'none' };
 }

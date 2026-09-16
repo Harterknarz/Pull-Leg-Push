@@ -4,7 +4,7 @@ import { CUSTOM_VALUE } from '../data/plan';
 import { platesLabel } from '../lib/plates';
 import { Sparkline } from './Sparkline';
 
-const DAY_COLOR_VAR: Record<Day, string> = { mon: '--pull', wed: '--leg', fri: '--push' };
+const DAY_COLOR_VAR: Record<Day, string> = { mon: '--push', wed: '--leg', fri: '--pull' };
 
 function emptySets(count: number): SetEntry[] {
   return Array.from({ length: count }, () => ({ weight: '', reps: '', rpe: '' }));
